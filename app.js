@@ -10,6 +10,14 @@ app.post('/swag', (req, res) => {
   res.send(req.body);
 });
 
+app.get('/swag/:person', (req, res) => {
+  res.send(req.params.person);
+})
+
+app.get('/swag', (req, res) => {
+  res.send('get swag');
+})
+
 // 서버가 리스닝할 포트를 설정합니다.
 const port = 3000;
 app.listen(port, () => {
