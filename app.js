@@ -3,10 +3,11 @@ const express = require('express');
 
 // express 애플리케이션을 생성합니다.
 const app = express();
+app.use(express.json()); // json 요청을 받을 수 있도록 설정
 
 // 기본 라우트를 설정합니다.
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
+app.post('/swag', (req, res) => {
+  res.send(req.body);
 });
 
 // 서버가 리스닝할 포트를 설정합니다.
