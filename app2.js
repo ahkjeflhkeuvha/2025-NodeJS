@@ -2,16 +2,18 @@ const express = require("express");
 const path = require("path");
 const swagRoute = require("./Routes/swagRoute");
 const mysql2 = require("mysql2");
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, 'views'));
 
 const db = mysql2.createConnection({
-    host : 'localhost',
-    user : 'root',
-    password: 'mirim3',
-    database: 'traveldb'
+    host : process.env.DB_HOST,
+    user : process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 })
 
 db.connect((err) => {
