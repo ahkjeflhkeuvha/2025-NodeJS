@@ -1,10 +1,25 @@
 const express = require("express");
 const path = require("path");
 const swagRoute = require("./Routes/swagRoute");
+const mysql2 = require("mysql2");
 
 const app = express();
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, 'views'));
+
+const db = mysql2.createConnection({
+    host : 'localhost',
+    user : 'root',
+    password: 'mirim3',
+    database: 'traveldb'
+})
+
+db.connect((err) => {
+    if (err) {
+        console.log("fail : " + err);
+    }
+    console.log("success")
+});
 
 const travelList = ["뉴욕", "빠리", "내집", "도쿄"];
 
