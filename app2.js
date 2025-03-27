@@ -23,14 +23,24 @@ db.connect((err) => {
     console.log("success")
 });
 
-const travelList = ["뉴욕", "빠리", "내집", "도쿄"];
-
 app.get('/', (req, res) => {
     
 });
 
 app.get('/travel', (req, res) => {
-    res.render('travel', {travelList});
+    let travelList;
+    const query = 'SELECT id, name FROM travelList';
+    db.query(query, (err, results) => {
+        if(err) {
+            res.status(500).json({ message : "error"});
+            return;
+        }
+        travelList = results;
+        console.log(travelList);
+        res.render('travel', {travelList});
+    })
+    // res.status(200).json({ message : 'success'});
+    
 })
 
 app.use('/swag',  swagRoute);
