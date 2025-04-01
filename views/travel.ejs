@@ -9,10 +9,9 @@
     <ul>
         <% travelList.forEach((travel) => { %>
             <li>
-                <%= travel.id %>
-                <%= travel.name %>
+                <a href="/travel/<%= travel.id %>"><%= travel.name %></a>
             </li>
         <% }) %>
     </ul>
 </body>
-</html>
+</html>-
