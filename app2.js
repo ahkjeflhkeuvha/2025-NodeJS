@@ -7,9 +7,9 @@ dotenv.config();
 
 const app = express();
 app.set("view engine", "ejs");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
 app.set("views", path.join(__dirname, "views"));
-
-console.log(__dirname);
 
 const db = mysql2.createConnection({
   host: process.env.DB_HOST,
@@ -45,7 +45,7 @@ app.get("/travel", (req, res) => {
 app.get("/travel/:id", (req, res) => {
   const travelId = req.params.id;
   const _query = "SELECT * FROM travelList WHERE id = ?";
-  db.query(_query, [travelId], (err, results) => {
+  db.query(_query, [travelId], (err, results) => { // 물음표의 값은 []로 대체됨
     if (err) {
       res.status(500).send("Internal SErver Error");
     }
@@ -56,6 +56,39 @@ app.get("/travel/:id", (req, res) => {
     res.render("travelDetail", { travel });
   });
 });
+
+app.post('/travel', (req, res) => {
+  const { name } = req.body;
+  const query = "INSERT INTO travelList (name) VALUES (?)";
+
+  db.query(query, [name], (err, results) => { // 물음표의 값은 []로 대체됨
+    if (err) {
+      res.status(500).json("Cannot insert data");
+      return;
+    } else {
+      res.redirect('/travel');
+    }
+  })
+})
+
+app.post('/add-travel', (req, res) => {
+  console.log(req.body);
+  const { name } = req.body;
+  const query = 'INSERT INTO travelList (name) VALUE (?)';
+
+  db.query(query, [name], (err, results) => {
+    if (err) {
+      res.status(500).send("Internet Server Error");
+      return;
+    } else {
+      res.redirect('/travel');
+    }
+  })
+})
+
+app.get('/add-travel', (req, res) => {
+  res.render("addTravel");
+})
 
 app.use("/swag", swagRoute);
 
