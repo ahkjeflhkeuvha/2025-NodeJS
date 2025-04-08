@@ -117,6 +117,19 @@ app.put("/travel/:id/edit", (req, res) => {
   });
 });
 
+app.delete("/travel/:id", (req, res) => {
+  const travelId = req.params.id;
+  const _query = "DELETE FROM travelList WHERE id = ?";
+  db.query(_query, [travelId], (err, results) => { // 물음표의 값은 []로 대체됨
+    if (err) {
+      console.log(err);
+      res.status(500).send("Internal SErver Error");
+    }
+    const travel = results[0];
+    res.render("deleteSuccess");
+  });
+});
+
 app.get('/add-travel', (req, res) => {
   res.render("addTravel");
 })
