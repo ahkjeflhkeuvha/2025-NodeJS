@@ -3,12 +3,14 @@ const path = require("path");
 const swagRoute = require("./Routes/swagRoute");
 const mysql2 = require("mysql2");
 const dotenv = require("dotenv");
+const methodOverride = require("method-override");
 dotenv.config();
 
 const app = express();
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
+app.use(methodOverride("_method"))
 app.set("views", path.join(__dirname, "views"));
 
 const db = mysql2.createConnection({
@@ -86,7 +88,22 @@ app.post('/add-travel', (req, res) => {
   })
 })
 
-app.put("/travel/:id", (req, res) => {
+app.get("/travel/:id/edit", (req, res) => {
+  const travelId = req.params.id;
+  const _query = "SELECT * FROM travelList WHERE id = ?";
+  db.query(_query, [travelId], (err, results) => { // 물음표의 값은 []로 대체됨
+    if (err) {
+      res.status(500).send("Internal SErver Error");
+    }
+    if (results.length == 0) {
+      res.status(404).send("No Data");
+    }
+    const travel = results[0];
+    res.render("editTravel", { travel });
+  });
+});
+
+app.put("/travel/:id/edit", (req, res) => {
   const travelId = req.params.id;
   const { name } = req.body;
   const _query = "UPDATE travelList SET name = ? WHERE id = ?";
@@ -95,7 +112,7 @@ app.put("/travel/:id", (req, res) => {
       console.log(err);
       res.status(500).send("Internal SErver Error");
     }
-
+    const travel = results[0];
     res.render("updateSuccess");
   });
 });
