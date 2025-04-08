@@ -86,6 +86,20 @@ app.post('/add-travel', (req, res) => {
   })
 })
 
+app.put("/travel/:id", (req, res) => {
+  const travelId = req.params.id;
+  const { name } = req.body;
+  const _query = "UPDATE travelList SET name = ? WHERE id = ?";
+  db.query(_query, [name, travelId], (err, results) => { // 물음표의 값은 []로 대체됨
+    if (err) {
+      console.log(err);
+      res.status(500).send("Internal SErver Error");
+    }
+
+    res.render("updateSuccess");
+  });
+});
+
 app.get('/add-travel', (req, res) => {
   res.render("addTravel");
 })
