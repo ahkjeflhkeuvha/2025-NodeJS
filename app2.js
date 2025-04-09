@@ -73,7 +73,7 @@ app.post('/travel', (req, res) => {
   })
 })
 
-app.post('/add-travel', (req, res) => {
+app.post('/travel/add', (req, res) => {
   console.log(req.body);
   const { name } = req.body;
   const query = 'INSERT INTO travelList (name) VALUE (?)';
@@ -130,8 +130,15 @@ app.delete("/travel/:id", (req, res) => {
   });
 });
 
-app.get('/add-travel', (req, res) => {
+app.get('/travel/add', (req, res) => {
   res.render("addTravel");
+})
+
+// use : 모든 method 요청에 대해서
+// 라우트 X : 모든 경로 (위에 해당하지 않는 경로)
+
+app.use((req, res) => {
+  res.status(404).send("404 Not Found");
 })
 
 app.use("/swag", swagRoute);
