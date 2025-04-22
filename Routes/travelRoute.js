@@ -31,10 +31,15 @@ router.get("/:id", async (req, res) => {
     const travelId = req.params.id;
     const _query = "SELECT * FROM travelList WHERE id = ?";
     const results = await db.query(_query, [travelId]);
+    if (results.length === 0) {
+      res.status(404).send("No data");
+      return;
+    }
     const travel = results[0];
     res.render("travelDetail", { travel });
   } catch (e) {
     console.log(e);
+    res.status(500).send("Internet Server Error")
   }
 });
 
@@ -47,6 +52,8 @@ router.post("/", async (req, res) => {
     res.redirect("/travel");
   } catch (e) {
     console.log(e);
+    res.status(500).send("Internet Server Error")
+
   }
 });
 
@@ -54,12 +61,13 @@ router.get("/:id/edit", async (req, res) => {
   try {
     const travelId = req.params.id;
     const _query = "SELECT * FROM travelList WHERE id = ?";
-    const results = await db.query(_query, [travelId]);
-    const travel = results[0][0]
-    console.log(travel)
+    const [results] = await db.query(_query, [travelId]);
+    const travel = results[0]
     res.render("editTravel", { travel })
   } catch (e) {
     console.log(e);
+    res.status(500).send("Internet Server Error")
+
   }
 });
 
@@ -72,6 +80,8 @@ router.put("/:id/edit", async (req, res) => {
     res.render("updateSuccess");
   } catch (e) {
     console.log(e);
+    res.status(500).send("Internet Server Error")
+
   }
 });
 
@@ -83,6 +93,8 @@ router.delete("/:id", async (req, res) => {
     res.render("deleteSuccess");
   } catch(e) {
     console.log(e)
+    res.status(500).send("Internet Server Error")
+
   }
 });
 
