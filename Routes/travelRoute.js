@@ -13,7 +13,7 @@ app.set("views", path.join(__dirname, "../views"));
 router.get("/", async (req, res) => {
   try {
     const results = await Travel.findAll();
-    const travelList = results[0];
+    const travelList = results;
     console.log(travelList)
     res.render("travel", { travelList });
   } catch(e) {
@@ -30,11 +30,12 @@ router.get("/:id", async (req, res) => {
   try {
     const travelId = req.params.id;
     const results = await Travel.findByPk(travelId);
+    console.log(results.dataValues)
     if (results.length === 0) {
       res.status(404).send("No data");
       return;
     }
-    const travel = results[0];
+    const travel = results.dataValues;
     res.render("travelDetail", { travel });
   } catch (e) {
     console.log(e);
@@ -61,8 +62,8 @@ router.post("/", async (req, res) => {
 router.get("/:id/edit", async (req, res) => {
   try {
     const travelId = req.params.id;
-    const [results] = await Travel.findByPk(travelId);
-    const travel = results[0]
+    const results = await Travel.findByPk(travelId);
+    const travel = results.dataValues
     res.render("editTravel", { travel })
   } catch (e) {
     console.log(e);
