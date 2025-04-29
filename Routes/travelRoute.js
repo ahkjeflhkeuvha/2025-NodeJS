@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database");
 const path = require("path");
+const Travel = require("../travelModel");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -11,8 +12,7 @@ app.set("views", path.join(__dirname, "../views"));
 
 router.get("/", async (req, res) => {
   try {
-    const query = "SELECT id, name FROM travelList";
-    const results = await db.query(query);
+    const results = await Travel.findAll();
     const travelList = results[0];
     console.log(travelList)
     res.render("travel", { travelList });
@@ -29,8 +29,7 @@ router.get("/add", (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const travelId = req.params.id;
-    const _query = "SELECT * FROM travelList WHERE id = ?";
-    const results = await db.query(_query, [travelId]);
+    const results = await Travel.findByPk(travelId);
     if (results.length === 0) {
       res.status(404).send("No data");
       return;
@@ -46,9 +45,11 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { name } = req.body;
-    const query = "INSERT INTO travelList (name) VALUES (?)";
 
-    await db.query(query, [name]);
+    await Travel.create({
+      name: name,
+    });
+
     res.redirect("/travel");
   } catch (e) {
     console.log(e);
@@ -60,8 +61,7 @@ router.post("/", async (req, res) => {
 router.get("/:id/edit", async (req, res) => {
   try {
     const travelId = req.params.id;
-    const _query = "SELECT * FROM travelList WHERE id = ?";
-    const [results] = await db.query(_query, [travelId]);
+    const [results] = await Travel.findByPk(travelId);
     const travel = results[0]
     res.render("editTravel", { travel })
   } catch (e) {
@@ -75,8 +75,11 @@ router.put("/:id/edit", async (req, res) => {
   try {
     const travelId = req.params.id;
     const { name } = req.body;
-    const _query = "UPDATE travelList SET name = ? WHERE id = ?";
-    await db.query(_query, [name, travelId]);
+
+    await Travel.update(
+      {name:name},
+      { where: { id: travelId } }
+    );
     res.render("updateSuccess");
   } catch (e) {
     console.log(e);
@@ -88,8 +91,8 @@ router.put("/:id/edit", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const travelId = req.params.id;
-    const _query = "DELETE FROM travelList WHERE id = ?";
-    await db.query(_query, [travelId]);
+    const travel = await Travel.findByPk(travelId);
+    await travel.destroy();
     res.render("deleteSuccess");
   } catch(e) {
     console.log(e)
